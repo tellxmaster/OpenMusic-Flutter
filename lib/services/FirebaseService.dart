@@ -3,7 +3,7 @@ import '../firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/Song.dart';
 
-class FireBaseService {
+class FirebaseService {
   late FirebaseFirestore _firestore;
 
   Future<void> initDatabase() async {

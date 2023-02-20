@@ -8,7 +8,10 @@ class SongCardWidget extends StatelessWidget {
   final Song song;
   final NetworkImage image;
 
-  SongCardWidget({required this.song, required this.image});
+  SongCardWidget(
+      {required this.song,
+      required this.image,
+      required Null Function() onTap});
 
   @override
   Widget build(BuildContext context) {

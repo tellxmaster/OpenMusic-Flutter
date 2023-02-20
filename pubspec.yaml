@@ -38,6 +38,8 @@ dependencies:
   firebase_core: ^2.5.0
   cloud_firestore: ^4.3.2
   carousel_slider: ^4.2.1
+  audioplayers: ^0.20.1
+  video_player: ^2.5.1
 
 dev_dependencies:
   flutter_test:
