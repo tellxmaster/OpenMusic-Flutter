@@ -9,9 +9,10 @@ import 'models/Song.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
-  FirebaseService fireBaseService = FirebaseService();
-  await fireBaseService.initDatabase();
 }
 
 class MyApp extends StatelessWidget {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'OpenMusic App',
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.lightGreen,
@@ -74,10 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+  final FirebaseService _firebaseService = FirebaseService();
+  List<Song> _songs = [];
 
   @override
   void initState() {
     super.initState();
+    _fetchSongs();
     _audioPlayer.onDurationChanged.listen((newDuration) {
       setState(() {
         duration = newDuration;
@@ -91,7 +95,14 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  static final List<Song> songs = [
+  Future<void> _fetchSongs() async {
+    List<Song> songs = await _firebaseService.listSongs();
+    setState(() {
+      _songs = songs;
+    });
+  }
+
+  List<Song> songs = [
     Song(
         title: 'Good News',
         artist: 'Mac Miller',
@@ -188,7 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                 ),
                 Expanded(
                   child: Padding(
@@ -247,7 +258,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     final List<Widget> _content = <Widget>[
       SongListWidget(
-        songs: songs,
+        songs: _songs,
         onSongSelected: (song) => _playSong(song),
       ),
       SongForm()

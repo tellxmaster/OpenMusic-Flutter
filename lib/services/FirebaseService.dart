@@ -4,17 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/Song.dart';
 
 class FirebaseService {
-  late FirebaseFirestore _firestore;
-
-  Future<void> initDatabase() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    _firestore = FirebaseFirestore.instance;
-  }
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
   Future<void> insertSong(Song song) async {
-    await _firestore.collection('songs').add({
+    await db.collection('songs').add({
       'title': song.title,
       'artist': song.artist,
       'album': song.album,
@@ -26,7 +19,7 @@ class FirebaseService {
 
   Future<List<Song>> listSongs() async {
     List<Song> songs = [];
-    QuerySnapshot querySnapshot = await _firestore.collection('songs').get();
+    QuerySnapshot querySnapshot = await db.collection('songs').get();
     for (var document in querySnapshot.docs) {
       songs.add(Song(
           title: document.get('title'),
@@ -34,7 +27,7 @@ class FirebaseService {
           album: document.get('album'),
           duration: document.get('duration'),
           url: document.get('url'),
-          imageUrl: document.get('imgUrl')));
+          imageUrl: document.get('imageUrl')));
     }
     return songs;
   }

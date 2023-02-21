@@ -5,7 +5,7 @@ import '../models/Song.dart';
 import './SongCardWidget.dart';
 
 class SongListWidget extends StatelessWidget {
-  final List<Song> songs;
+  List<Song> songs;
   dynamic Function(Song) onSongSelected;
 
   SongListWidget({required this.songs, required this.onSongSelected});
