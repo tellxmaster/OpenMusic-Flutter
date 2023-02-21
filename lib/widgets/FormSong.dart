@@ -12,7 +12,12 @@ class _SongFormState extends State<SongForm> {
   final _formKey = GlobalKey<FormState>();
   FirebaseService fbService = FirebaseService();
   final Song _song = Song(
-      title: '', artist: '', album: '', duration: 0, url: '', imageUrl: '');
+      title: '',
+      artist: '',
+      album: '',
+      duration: Duration.zero,
+      url: '',
+      imageUrl: '');
 
   void _submit(Song sng) async {
     developer.log(_formKey.currentState!.validate().toString());
@@ -49,54 +54,165 @@ class _SongFormState extends State<SongForm> {
 
   @override
   Widget build(BuildContext context) {
+    List<String> parts;
     return Padding(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 12.0),
       child: Form(
         key: _formKey,
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Titulo', prefixIcon: Icon(Icons.title)),
-              validator: (value) =>
-                  value!.isEmpty ? 'El titulo no puede estar vacio' : null,
-              onSaved: (value) => _song.title = value!,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Titulo',
+                    filled: true,
+                    suffixIcon: Icon(Icons.title),
+                    fillColor: Colors.grey[850],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    iconColor: Colors.purple[300]!),
+                validator: (value) =>
+                    value!.isEmpty ? 'El titulo no puede estar vacio' : null,
+                onSaved: (value) => _song.title = value!,
+              ),
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Artista', prefixIcon: Icon(Icons.person)),
-              validator: (value) =>
-                  value!.isEmpty ? 'El Artista no puede estar vacio' : null,
-              onSaved: (value) => _song.artist = value!,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Artista',
+                    filled: true,
+                    suffixIcon: Icon(Icons.people),
+                    fillColor: Colors.grey[850],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    iconColor: Colors.purple[300]!),
+                validator: (value) =>
+                    value!.isEmpty ? 'El artista no puede estar vacio' : null,
+                onSaved: (value) => _song.artist = value!,
+              ),
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Album', prefixIcon: Icon(Icons.album)),
-              validator: (value) =>
-                  value!.isEmpty ? 'El Album no puede estar vacio' : null,
-              onSaved: (value) => _song.album = value!,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Album',
+                    filled: true,
+                    suffixIcon: Icon(Icons.album),
+                    fillColor: Colors.grey[850],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    iconColor: Colors.purple[300]!),
+                validator: (value) =>
+                    value!.isEmpty ? 'El album no puede estar vacio' : null,
+                onSaved: (value) => _song.album = value!,
+              ),
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Duracion', prefixIcon: Icon(Icons.timer)),
-              keyboardType: TextInputType.number,
-              validator: (value) =>
-                  value!.isEmpty ? 'La Duracion no puede ser vacia' : null,
-              onSaved: (value) => _song.duration = int.tryParse(value!)!,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                  decoration: InputDecoration(
+                      labelText: 'Duración',
+                      filled: true,
+                      suffixIcon: Icon(Icons.timer),
+                      fillColor: Colors.grey[850],
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: Colors.purple[300]!),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(color: Colors.purple[300]!),
+                      ),
+                      iconColor: Colors.purple[300]!),
+                  keyboardType: TextInputType.datetime,
+                  validator: (value) {
+                    final validDuration = RegExp(
+                        r'^(\d{1,2}:)?([0-5]?\d:)?([0-5]?\d)$'); // regex for hh:mm:ss or mm:ss format
+                    if (!validDuration.hasMatch(value!)) {
+                      return 'Por favor ingrese una duración válida (hh:mm:ss o mm:ss)';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    var parts = value!.split(':');
+                    if (parts.length == 2) {
+                      _song.duration = Duration(
+                          minutes: int.parse(parts[0]),
+                          seconds: int.parse(parts[1]));
+                    } else if (parts.length == 3) {
+                      _song.duration = Duration(
+                          hours: int.parse(parts[0]),
+                          minutes: int.parse(parts[1]),
+                          seconds: int.parse(parts[2]));
+                    }
+                  }),
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'URL', prefixIcon: Icon(Icons.link)),
-              validator: (value) =>
-                  value!.isEmpty ? 'URL no puede estar vacia' : null,
-              onSaved: (value) => _song.url = value!,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Audio URL',
+                    filled: true,
+                    suffixIcon: Icon(Icons.link),
+                    fillColor: Colors.grey[850],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    iconColor: Colors.purple[300]!),
+                validator: (value) => value!.isEmpty
+                    ? 'La URL del audio no puede estar vacia'
+                    : null,
+                onSaved: (value) => _song.url = value!,
+              ),
             ),
-            TextFormField(
-              decoration: const InputDecoration(
-                  labelText: 'Image URL', prefixIcon: Icon(Icons.image)),
-              validator: (value) =>
-                  value!.isEmpty ? 'Image URL no puede estar vacia' : null,
-              onSaved: (value) => _song.imageUrl = value!,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                decoration: InputDecoration(
+                    labelText: 'Imagen URL',
+                    filled: true,
+                    suffixIcon: Icon(Icons.image),
+                    fillColor: Colors.grey[850],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    iconColor: Colors.purple[300]!),
+                validator: (value) => value!.isEmpty
+                    ? 'La URL de la imagen no puede estar vacio'
+                    : null,
+                onSaved: (value) => _song.imageUrl = value!,
+              ),
             ),
             Padding(
                 padding: const EdgeInsets.all(16),

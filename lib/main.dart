@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.grey[900],
         cardColor: Colors.grey[800],
         dividerColor: Colors.grey[700],
-        focusColor: Colors.greenAccent,
+        focusColor: Colors.purple[300],
         hoverColor: Colors.greenAccent.withOpacity(0.2),
         splashColor: Colors.greenAccent.withOpacity(0.4),
         textTheme: const TextTheme(
@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     title: '',
     artist: '',
     album: '',
-    duration: 0,
+    duration: Duration.zero,
     url: '',
     imageUrl: '',
   );
@@ -102,42 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  List<Song> songs = [
-    Song(
-        title: 'Good News',
-        artist: 'Mac Miller',
-        album: 'Circles',
-        duration: 5,
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/en/1/15/Mac_Miller_-_Circles.png'),
-    Song(
-        title: 'Song 2',
-        artist: 'SoundHelix',
-        album: 'Test',
-        duration: 3,
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-        imageUrl:
-            'https://cdn.domestika.org/c_fit,dpr_auto,f_auto,t_base_params,w_820/v1589500982/content-items/004/567/801/13th_Floor_Elevators_Psychedelic-original.jpg?1589500982'),
-    Song(
-        title: 'Complicated',
-        artist: 'Mac Miller',
-        album: 'Circles',
-        duration: 3,
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/en/1/15/Mac_Miller_-_Circles.png'),
-    Song(
-        title: 'Imigrant Song',
-        artist: 'Led Zeppelin',
-        album: 'Led Zeppelin III',
-        duration: 3,
-        url:
-            'http://188.165.227.112/portail/musique/Led%20Zeppelin%20-%20Discography/Led%20Zeppelin%20-%20Led%20Zeppelin%20III/Led%20Zeppelin%20-%20Led%20Zeppelin%20III%20-%2001%20-%20Immigrant%20Song.mp3',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/en/5/5f/Led_Zeppelin_-_Led_Zeppelin_III.png')
-  ];
-
   void _playSong(Song song) async {
     setState(() {
       _currentSong = song;
@@ -154,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onItemTarget(int index) {
     setState(() {
       _itemSeleccionado = index;
+      _fetchSongs();
     });
   }
 
@@ -256,7 +221,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _content = <Widget>[
+    List<Widget> content = <Widget>[
       SongListWidget(
         songs: _songs,
         onSongSelected: (song) => _playSong(song),
@@ -308,7 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: _content[_itemSeleccionado],
+            child: content[_itemSeleccionado],
           ),
           _buildAudioPlayer(),
         ],

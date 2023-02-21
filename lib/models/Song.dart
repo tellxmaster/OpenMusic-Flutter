@@ -3,7 +3,7 @@ class Song {
   String title;
   String artist;
   String album;
-  int duration;
+  Duration duration;
   String url;
   String imageUrl;
 
@@ -30,6 +30,6 @@ class Song {
 
   @override
   String toString() {
-    return 'Song{id: $id, name: $title, age: $artist, album: $album, duration: $duration}';
+    return 'Song{id: $id, title: $title, artista: $artist, album: $album, duration: $duration}';
   }
 }
