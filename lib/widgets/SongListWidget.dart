@@ -8,7 +8,8 @@ class SongListWidget extends StatelessWidget {
   List<Song> songs;
   dynamic Function(Song) onSongSelected;
 
-  SongListWidget({required this.songs, required this.onSongSelected});
+  SongListWidget(
+      {super.key, required this.songs, required this.onSongSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +71,7 @@ class SongListWidget extends StatelessWidget {
                 title: Text(songs[index].title),
                 subtitle: Text(songs[index].artist),
                 trailing: IconButton(
-                  icon: Icon(Icons.more_vert),
+                  icon: const Icon(Icons.more_vert),
                   onPressed: () {},
                 ),
                 onTap: () => onSongSelected(songs[index]),

@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:test_firebase/services/FirebaseService.dart';
 import 'package:test_firebase/widgets/FormSong.dart';
+import 'package:test_firebase/widgets/ListSongs.dart';
 import 'package:test_firebase/widgets/SongListWidget.dart';
 import 'firebase_options.dart';
 import 'models/Song.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
-  FirebaseService fireBaseService = FirebaseService();
-  await fireBaseService.initDatabase();
 }
 
 class MyApp extends StatelessWidget {
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'OpenMusic App',
       theme: ThemeData(
         brightness: Brightness.dark,
         primaryColor: Colors.lightGreen,
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colors.grey[900],
         cardColor: Colors.grey[800],
         dividerColor: Colors.grey[700],
-        focusColor: Colors.greenAccent,
+        focusColor: Colors.purple[300],
         hoverColor: Colors.greenAccent.withOpacity(0.2),
         splashColor: Colors.greenAccent.withOpacity(0.4),
         textTheme: const TextTheme(
@@ -74,10 +76,13 @@ class _MyHomePageState extends State<MyHomePage> {
   bool _isPlaying = false;
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
+  final FirebaseService _firebaseService = FirebaseService();
+  List<Song> _songs = [];
 
   @override
   void initState() {
     super.initState();
+    _fetchSongs();
     _audioPlayer.onDurationChanged.listen((newDuration) {
       setState(() {
         duration = newDuration;
@@ -91,41 +96,12 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  static final List<Song> songs = [
-    Song(
-        title: 'Good News',
-        artist: 'Mac Miller',
-        album: 'Circles',
-        duration: 5,
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/en/1/15/Mac_Miller_-_Circles.png'),
-    Song(
-        title: 'Song 2',
-        artist: 'SoundHelix',
-        album: 'Test',
-        duration: 3,
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-        imageUrl:
-            'https://cdn.domestika.org/c_fit,dpr_auto,f_auto,t_base_params,w_820/v1589500982/content-items/004/567/801/13th_Floor_Elevators_Psychedelic-original.jpg?1589500982'),
-    Song(
-        title: 'Complicated',
-        artist: 'Mac Miller',
-        album: 'Circles',
-        duration: 3,
-        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/en/1/15/Mac_Miller_-_Circles.png'),
-    Song(
-        title: 'Imigrant Song',
-        artist: 'Led Zeppelin',
-        album: 'Led Zeppelin III',
-        duration: 3,
-        url:
-            'http://188.165.227.112/portail/musique/Led%20Zeppelin%20-%20Discography/Led%20Zeppelin%20-%20Led%20Zeppelin%20III/Led%20Zeppelin%20-%20Led%20Zeppelin%20III%20-%2001%20-%20Immigrant%20Song.mp3',
-        imageUrl:
-            'https://upload.wikimedia.org/wikipedia/en/5/5f/Led_Zeppelin_-_Led_Zeppelin_III.png')
-  ];
+  Future<void> _fetchSongs() async {
+    List<Song> songs = await _firebaseService.listSongs();
+    setState(() {
+      _songs = songs;
+    });
+  }
 
   void _playSong(Song song) async {
     setState(() {
@@ -143,6 +119,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _onItemTarget(int index) {
     setState(() {
       _itemSeleccionado = index;
+      _fetchSongs();
     });
   }
 
@@ -188,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  padding: EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(8),
                 ),
                 Expanded(
                   child: Padding(
@@ -245,12 +222,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _content = <Widget>[
+    List<Widget> content = <Widget>[
       SongListWidget(
-        songs: songs,
+        songs: _songs,
         onSongSelected: (song) => _playSong(song),
       ),
-      SongForm()
+      SongForm(),
+      const ListSongs()
     ];
     return Scaffold(
       appBar: AppBar(
@@ -280,12 +258,6 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           backgroundColor: Colors.purple,
           centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-// Handle menu button press
-            },
-          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
@@ -295,34 +267,31 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ]),
       drawer: Drawer(
-        // Add a ListView to the drawer. This ensures the user can scroll
-        // through the options in the drawer if there isn't enough vertical
-        // space to fit everything.
         child: ListView(
-          // Important: Remove any padding from the ListView.
           padding: EdgeInsets.zero,
           children: [
             const DrawerHeader(
               decoration: BoxDecoration(
                 color: Colors.purple,
               ),
-              child: Text('Drawer Header'),
+              child: Text(
+                'OpenMusic',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22.0,
+                ),
+              ),
             ),
             ListTile(
               title: const Text('Item 1'),
               onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
                 Navigator.pop(context);
               },
             ),
             ListTile(
               title: const Text('Item 2'),
+              leading: const Icon(Icons.key),
               onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
                 Navigator.pop(context);
               },
             ),
@@ -332,7 +301,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: _content[_itemSeleccionado],
+            child: content[_itemSeleccionado],
           ),
           _buildAudioPlayer(),
         ],
