@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:test_firebase/services/FirebaseService.dart';
 import 'package:test_firebase/widgets/FormSong.dart';
+import 'package:test_firebase/widgets/ListSongs.dart';
 import 'package:test_firebase/widgets/SongListWidget.dart';
 import 'firebase_options.dart';
 import 'models/Song.dart';
@@ -67,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
     title: '',
     artist: '',
     album: '',
-    duration: Duration.zero,
+    duration: 0,
     url: '',
     imageUrl: '',
   );
@@ -226,7 +227,8 @@ class _MyHomePageState extends State<MyHomePage> {
         songs: _songs,
         onSongSelected: (song) => _playSong(song),
       ),
-      SongForm()
+      SongForm(),
+      const ListSongs()
     ];
     return Scaffold(
       appBar: AppBar(

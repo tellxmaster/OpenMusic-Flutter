@@ -12,12 +12,7 @@ class _SongFormState extends State<SongForm> {
   final _formKey = GlobalKey<FormState>();
   FirebaseService fbService = FirebaseService();
   final Song _song = Song(
-      title: '',
-      artist: '',
-      album: '',
-      duration: Duration.zero,
-      url: '',
-      imageUrl: '');
+      title: '', artist: '', album: '', duration: 0, url: '', imageUrl: '');
 
   void _submit(Song sng) async {
     developer.log(_formKey.currentState!.validate().toString());
@@ -131,42 +126,25 @@ class _SongFormState extends State<SongForm> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: TextFormField(
-                  decoration: InputDecoration(
-                      labelText: 'Duración',
-                      filled: true,
-                      suffixIcon: Icon(Icons.timer),
-                      fillColor: Colors.grey[850],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(color: Colors.purple[300]!),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(color: Colors.purple[300]!),
-                      ),
-                      iconColor: Colors.purple[300]!),
-                  keyboardType: TextInputType.datetime,
-                  validator: (value) {
-                    final validDuration = RegExp(
-                        r'^(\d{1,2}:)?([0-5]?\d:)?([0-5]?\d)$'); // regex for hh:mm:ss or mm:ss format
-                    if (!validDuration.hasMatch(value!)) {
-                      return 'Por favor ingrese una duración válida (hh:mm:ss o mm:ss)';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    var parts = value!.split(':');
-                    if (parts.length == 2) {
-                      _song.duration = Duration(
-                          minutes: int.parse(parts[0]),
-                          seconds: int.parse(parts[1]));
-                    } else if (parts.length == 3) {
-                      _song.duration = Duration(
-                          hours: int.parse(parts[0]),
-                          minutes: int.parse(parts[1]),
-                          seconds: int.parse(parts[2]));
-                    }
-                  }),
+                decoration: InputDecoration(
+                    labelText: 'Duración',
+                    filled: true,
+                    suffixIcon: Icon(Icons.timer),
+                    fillColor: Colors.grey[850],
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(color: Colors.purple[300]!),
+                    ),
+                    iconColor: Colors.purple[300]!),
+                keyboardType: TextInputType.datetime,
+                validator: (value) =>
+                    value!.isEmpty ? 'La Duracion no puede ser vacia' : null,
+                onSaved: (value) => _song.duration = int.tryParse(value!)!,
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),

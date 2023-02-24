@@ -3,7 +3,7 @@ class Song {
   String title;
   String artist;
   String album;
-  Duration duration;
+  int duration;
   String url;
   String imageUrl;
 
