@@ -63,7 +63,7 @@ class _SongFormState extends State<SongForm> {
                 decoration: InputDecoration(
                     labelText: 'Titulo',
                     filled: true,
-                    suffixIcon: Icon(Icons.title),
+                    suffixIcon: const Icon(Icons.title),
                     fillColor: Colors.grey[850],
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -193,14 +193,33 @@ class _SongFormState extends State<SongForm> {
               ),
             ),
             Padding(
-                padding: const EdgeInsets.all(16),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 15.0, horizontal: 9.0),
+              child: SizedBox(
+                width: double.infinity,
                 child: ElevatedButton(
-                  child: const Text('Guardar'),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    backgroundColor: Colors.purple[300]!,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 24),
+                  ),
                   onPressed: () {
                     _submit(_song);
                     developer.log(_song.toString());
                   },
-                ))
+                  child: const Text(
+                    'Guardar',
+                    style: TextStyle(
+                      fontSize: 17.2,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            )
           ],
         ),
       ),
