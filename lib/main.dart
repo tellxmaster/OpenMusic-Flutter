@@ -63,17 +63,46 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _itemSeleccionado = 0;
-  late Song _currentSong = Song(
-    title: '',
-    artist: '',
-    album: '',
-    duration: 0,
-    url: '',
-    imageUrl: '',
+  Icon customIcon = const Icon(Icons.search);
+  Widget customSearchBar = Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      RichText(
+        text: const TextSpan(
+          text: 'Open',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22.0,
+          ),
+          children: <TextSpan>[
+            TextSpan(
+              text: 'Music',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 21.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+      const Icon(Icons.play_circle_fill),
+    ],
   );
+  int _itemSeleccionado = 0;
+  bool _showSearchBar = false;
+  TextEditingController _searchController = TextEditingController();
+  late Song _currentSong = Song(
+      title: '',
+      artist: '',
+      album: '',
+      duration: 0,
+      url: '',
+      imageUrl: '',
+      prueba: 'Examen');
   final _audioPlayer = AudioPlayer();
   bool _isPlaying = false;
+  bool _isSearching = false;
+  List<Song> _filteredSongs = [];
   Duration duration = Duration.zero;
   Duration position = Duration.zero;
   final FirebaseService _firebaseService = FirebaseService();
@@ -100,6 +129,17 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Song> songs = await _firebaseService.listSongs();
     setState(() {
       _songs = songs;
+      _filteredSongs = songs;
+    });
+  }
+
+  void _onSearch(String query) {
+    List<Song> filteredSongs = _songs
+        .where((song) => song.title.toLowerCase().contains(query.toLowerCase()))
+        .toList();
+    setState(() {
+      _isSearching = true;
+      _filteredSongs = filteredSongs;
     });
   }
 
@@ -232,40 +272,43 @@ class _MyHomePageState extends State<MyHomePage> {
     ];
     return Scaffold(
       appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RichText(
-                text: const TextSpan(
-                  text: 'Open',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 22.0,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text: 'Music',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 21.5,
-                      ),
-                    ),
-                  ],
+        title: _showSearchBar
+            ? TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  hintText: 'Buscar',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.white),
                 ),
-              ),
-              const Icon(Icons.play_circle_fill),
-            ],
+                style: const TextStyle(color: Colors.white),
+              )
+            : customSearchBar,
+        backgroundColor: Colors.purple,
+        centerTitle: true,
+        actions: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: _showSearchBar
+                ? IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      setState(() {
+                        _showSearchBar = false;
+                        _searchController.clear();
+                      });
+                    },
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: () {
+                      setState(() {
+                        _showSearchBar = true;
+                      });
+                    },
+                  ),
           ),
-          backgroundColor: Colors.purple,
-          centerTitle: true,
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-// Handle search button press
-              },
-            ),
-          ]),
+        ],
+      ),
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,

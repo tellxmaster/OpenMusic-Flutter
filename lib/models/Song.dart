@@ -6,6 +6,7 @@ class Song {
   int duration;
   String url;
   String imageUrl;
+  String prueba = "Examen";
 
   Song(
       {this.id,
@@ -14,7 +15,8 @@ class Song {
       required this.album,
       required this.duration,
       required this.url,
-      required this.imageUrl});
+      required this.imageUrl,
+      required this.prueba});
 
   Map<String, dynamic> toMap() {
     return {
@@ -25,6 +27,7 @@ class Song {
       'duration': duration,
       'url': url,
       'image_url': imageUrl,
+      'prueba': prueba,
     };
   }
 

@@ -12,7 +12,13 @@ class _SongFormState extends State<SongForm> {
   final _formKey = GlobalKey<FormState>();
   FirebaseService fbService = FirebaseService();
   final Song _song = Song(
-      title: '', artist: '', album: '', duration: 0, url: '', imageUrl: '');
+      title: '',
+      artist: '',
+      album: '',
+      duration: 0,
+      url: '',
+      imageUrl: '',
+      prueba: 'Examen');
 
   void _submit(Song sng) async {
     developer.log(_formKey.currentState!.validate().toString());

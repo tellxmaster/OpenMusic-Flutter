@@ -14,6 +14,7 @@ class FirebaseService {
       'duration': song.duration,
       'url': song.url,
       'imageUrl': song.imageUrl,
+      'prueba': song.prueba,
     });
   }
 
@@ -27,7 +28,8 @@ class FirebaseService {
           album: document.get('album'),
           duration: document.get('duration'),
           url: document.get('url'),
-          imageUrl: document.get('imageUrl')));
+          imageUrl: document.get('imageUrl'),
+          prueba: document.get('prueba')));
     }
     return songs;
   }
